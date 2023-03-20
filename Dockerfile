@@ -1,16 +1,16 @@
-FROM mikefarah/yq as yq
-
 FROM openjdk:17-alpine3.14
-COPY --from=yq /usr/bin/yq /usr/bin/yq
 RUN apk update && \
-    apk add --update --no-cache python3 py3-pip curl wget jq bash zsh
-RUN pip install jinja2-cli[yaml]
+    apk add --update --no-cache python3 py3-pip curl wget jq bash neovim ctags openssh-server openssh-client ansible fzf git && \
+    pip install jinja2-cli[yaml] && \
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
 RUN wget https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 && \
     mv ./ossutil64 /usr/bin/ossutil64 && \
     chmod 750 /usr/bin/ossutil64
-
+    
+COPY --from=mikefarah/yq /usr/bin/yq /usr/bin/yq
 COPY --from=restic/restic /usr/bin/restic /usr/bin/restic
+COPY --from=minio/mc /usr/bin/mc /usr/bin/mc
 
 ARG ARCH=amd64
 
@@ -33,23 +33,23 @@ RUN curl ${HELM_URL_V3} | tar xvzf - --strip-components=1 -C /usr/bin && \
 
 # Set up K3s: copy the necessary binaries from the K3s image.
 COPY --from=rancher/k3s:v1.22.6-k3s1 \
-    /bin/blkid \
-    /bin/charon \
-    /bin/cni \
-    /bin/conntrack \
-    /bin/containerd \
-    /bin/containerd-shim-runc-v2 \
-    /bin/ethtool \
-    /bin/ip \
-    /bin/ipset \
-    /bin/k3s \
-    /bin/losetup \
-    /bin/pigz \
-    /bin/runc \
-    /bin/swanctl \
-    /bin/which \
-    /bin/aux/xtables-legacy-multi \
-/usr/bin/
+        /bin/blkid \
+        /bin/charon \
+        /bin/cni \
+        /bin/conntrack \
+        /bin/containerd \
+        /bin/containerd-shim-runc-v2 \
+        /bin/ethtool \
+        /bin/ip \
+        /bin/ipset \
+        /bin/k3s \
+        /bin/losetup \
+        /bin/pigz \
+        /bin/runc \
+        /bin/swanctl \
+        /bin/which \
+        /bin/aux/xtables-legacy-multi \
+    /usr/bin/
 
 RUN ln -s /usr/bin/cni /usr/bin/bridge && \
     ln -s /usr/bin/cni /usr/bin/flannel && \
@@ -62,6 +62,7 @@ RUN ln -s /usr/bin/cni /usr/bin/bridge && \
     ln -s /usr/bin/k3s /usr/bin/k3s-etcd-snapshot && \
     ln -s /usr/bin/k3s /usr/bin/k3s-server && \
     ln -s /usr/bin/k3s /usr/bin/kubectl && \
+    ln -s /usr/bin/k3s /usr/bin/k && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/iptables && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/iptables-save && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/iptables-restore && \
@@ -74,23 +75,11 @@ RUN ln -s /usr/bin/cni /usr/bin/bridge && \
 RUN mkdir -p /var/lib/rancher/k3s/agent/images/ && \
     curl -sfL ${ETCD_URL} | tar xvzf - --strip-components=1 -C /usr/bin/ etcd-${ETCD_VERSION}-linux-${ARCH}/etcdctl
 
-ARG VERSION=dev
-
 ENV ETCDCTL_API=3
-
 ENV SSL_CERT_DIR /etc/rancher/ssl
-VOLUME /var/lib/kubelet
-VOLUME /var/lib/rancher/k3s
-VOLUME /var/lib/cni
-VOLUME /var/log
-
 ENV PATH="$PATH:/bin/aux"
 
 ENV CRI_CONFIG_FILE="/var/lib/rancher/k3s/agent/etc/crictl.yaml"
-
-RUN apk add openssh-server openssh-client ansible && \
-    apk add fzf git curl && \
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
 RUN \
     ( \
@@ -110,3 +99,7 @@ RUN kubectl krew install ns && \
     kubectl krew install neat 
 
 WORKDIR /data/
+
+RUN curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    
