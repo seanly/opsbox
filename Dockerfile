@@ -17,7 +17,7 @@ ARG ARCH=amd64
 ENV HELM_VERSION v3.9.0
 ENV KUSTOMIZE_VERSION v4.5.5
 ENV ETCD_VERSION v3.5.1
-ENV RKE_VERSION v1.3.19
+ENV RKE_VERSION v1.3.8
 
 ENV HELM_URL_V3=https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz \
     ETCD_URL=https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-${ARCH}.tar.gz \

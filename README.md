@@ -2,8 +2,8 @@ h# opsbox
 
 ## rke
 
-version : v1.3.19
-k8s: v1.21.14-rancher1-1
+version : v1.3.8
+k8s: v1.21.5-rancher1
 
 ```bash
 docker-compose run opsbox-tool bash
