@@ -105,7 +105,7 @@ services:
     win_extra_binds: []
     win_extra_env: []
 network:
-  plugin: calico
+  plugin: canal
   options: {}
   mtu: 0
   node_selector: {}
@@ -119,10 +119,10 @@ addons: ""
 addons_include: []
 system_images:
   etcd: rancher/mirrored-coreos-etcd:v3.4.16-rancher1
-  alpine: rancher/rke-tools:v0.1.87
-  nginx_proxy: rancher/rke-tools:v0.1.87
-  cert_downloader: rancher/rke-tools:v0.1.87
-  kubernetes_services_sidecar: rancher/rke-tools:v0.1.87
+  alpine: rancher/rke-tools:v0.1.88
+  nginx_proxy: rancher/rke-tools:v0.1.88
+  cert_downloader: rancher/rke-tools:v0.1.88
+  kubernetes_services_sidecar: rancher/rke-tools:v0.1.88
   kubedns: rancher/mirrored-k8s-dns-kube-dns:1.17.4
   dnsmasq: rancher/mirrored-k8s-dns-dnsmasq-nanny:1.17.4
   kubedns_sidecar: rancher/mirrored-k8s-dns-sidecar:1.17.4
@@ -170,7 +170,7 @@ enable_cri_dockerd: null
 kubernetes_version: ""
 private_registries: []
 ingress:
-  provider: ""
+  provider: "none"
   options: {}
   node_selector: {}
   extra_args: {}
@@ -203,7 +203,7 @@ bastion_host:
   ssh_cert_path: ""
   ignore_proxy_env_vars: false
 monitoring:
-  provider: ""
+  provider: "none"
   options: {}
   node_selector: {}
   update_strategy: null
