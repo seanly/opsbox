@@ -17,15 +17,19 @@ ARG ARCH=amd64
 ENV HELM_VERSION v3.9.0
 ENV KUSTOMIZE_VERSION v4.5.5
 ENV ETCD_VERSION v3.5.1
+ENV RKE_VERSION v1.3.19
 
 ENV HELM_URL_V3=https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz \
     ETCD_URL=https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-${ARCH}.tar.gz \
-    KUSTOMIZE_URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_${ARCH}.tar.gz
+    KUSTOMIZE_URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_${ARCH}.tar.gz \
+    RKE_URL=https://github.com/rancher/rke/releases/download/${RKE_VERSION}/rke_linux-${ARCH}
 
 # set up helm 3 and kustomize
 RUN curl ${HELM_URL_V3} | tar xvzf - --strip-components=1 -C /usr/bin && \
     curl -sLf ${KUSTOMIZE_URL} | tar -xzf - -C /usr/bin && \
-    chmod +x /usr/bin/kustomize
+    chmod +x /usr/bin/kustomize && \
+    wget -O /usr/bin/rke ${RKE_URL} && \
+    chmod +x /usr/bin/rke
 
 # Set up K3s: copy the necessary binaries from the K3s image.
 COPY --from=rancher/k3s:v1.22.6-k3s1 \
@@ -105,3 +109,4 @@ RUN kubectl krew install ns && \
     kubectl krew install ctx && \
     kubectl krew install neat 
 
+WORKDIR /data/
