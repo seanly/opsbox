@@ -2,10 +2,18 @@ version: "3"
 services:
   opsbox-k3s:
     build:
-      context: ./
+      context: ./k3s
     image: seanly/k3s-dind
     volumes:
       - ./:/data
     restart: always
     privileged: true
     network_mode: host
+
+  opsbox-tool:
+    build:
+      context: ./
+    image: seanly/opsbox-tool
+    volumes:
+      - ./:/data
+    restart: always

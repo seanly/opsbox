@@ -1,16 +1,18 @@
-FROM mikefarah/yq as yq
+FROM docker:20.10-dind
 
-FROM openjdk:17-alpine3.14
-COPY --from=yq /usr/bin/yq /usr/bin/yq
-RUN apk update && \
-    apk add --update --no-cache python3 py3-pip curl wget jq bash zsh
-RUN pip install jinja2-cli[yaml]
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories && \
+    apk update && \
+    apk add curl bash vim 
 
-RUN wget https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 && \
-    mv ./ossutil64 /usr/bin/ossutil64 && \
-    chmod 750 /usr/bin/ossutil64
+RUN adduser -D opsbox && \
+    mkdir -p /var/lib/opsbox && \
+    chown -R opsbox /var/lib/opsbox /usr/local/bin
 
-COPY --from=restic/restic /usr/bin/restic /usr/bin/restic
+RUN mkdir -p /root/.kube && \
+    ln -s /etc/rancher/k3s/k3s.yaml /root/.kube/k3s.yaml && \
+    ln -s /etc/rancher/k3s/k3s.yaml /root/.kube/config
+
+WORKDIR /var/lib/opsbox
 
 ARG ARCH=amd64
 
@@ -72,6 +74,8 @@ RUN mkdir -p /var/lib/rancher/k3s/agent/images/ && \
 
 ARG VERSION=dev
 
+ENV OPSBOX_SERVER_VERSION ${VERSION}
+
 ENV ETCDCTL_API=3
 
 ENV SSL_CERT_DIR /etc/rancher/ssl
@@ -83,25 +87,4 @@ VOLUME /var/log
 ENV PATH="$PATH:/bin/aux"
 
 ENV CRI_CONFIG_FILE="/var/lib/rancher/k3s/agent/etc/crictl.yaml"
-
-RUN apk add openssh-server openssh-client ansible && \
-    apk add fzf git curl && \
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
-
-RUN \
-    ( \
-    set -x; cd "$(mktemp -d)" && \
-    OS="$(uname | tr '[:upper:]' '[:lower:]')" && \
-    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" && \
-    KREW="krew-${OS}_${ARCH}" && \
-    curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
-    tar zxvf "${KREW}.tar.gz" && \
-    ./"${KREW}" install krew \
-    )
-
-ENV PATH=${PATH}:/root/.krew/bin
-
-RUN kubectl krew install ns && \
-    kubectl krew install ctx && \
-    kubectl krew install neat 
 
