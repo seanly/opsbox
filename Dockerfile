@@ -62,7 +62,6 @@ RUN ln -s /usr/bin/cni /usr/bin/bridge && \
     ln -s /usr/bin/k3s /usr/bin/k3s-etcd-snapshot && \
     ln -s /usr/bin/k3s /usr/bin/k3s-server && \
     ln -s /usr/bin/k3s /usr/bin/kubectl && \
-    ln -s /usr/bin/k3s /usr/bin/k && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/iptables && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/iptables-save && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/iptables-restore && \
