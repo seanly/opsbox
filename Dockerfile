@@ -1,16 +1,9 @@
 FROM openjdk:17-alpine3.14
+
 RUN apk update && \
     apk add --update --no-cache python3 py3-pip curl wget jq bash neovim ctags openssh-server openssh-client ansible fzf git && \
     pip install jinja2-cli[yaml] && \
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
-
-RUN wget https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 && \
-    mv ./ossutil64 /usr/bin/ossutil64 && \
-    chmod 750 /usr/bin/ossutil64
-    
-COPY --from=mikefarah/yq /usr/bin/yq /usr/bin/yq
-COPY --from=restic/restic /usr/bin/restic /usr/bin/restic
-COPY --from=minio/mc /usr/bin/mc /usr/bin/mc
 
 ARG ARCH=amd64
 
@@ -101,4 +94,13 @@ WORKDIR /data/
 
 RUN curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+
+RUN wget https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 && \
+    mv ./ossutil64 /usr/bin/ossutil64 && \
+    chmod 750 /usr/bin/ossutil64
     
+COPY --from=mikefarah/yq /usr/bin/yq /usr/bin/yq
+COPY --from=restic/restic /usr/bin/restic /usr/bin/restic
+COPY --from=minio/mc /usr/bin/mc /usr/bin/mc
+COPY --from=seanly/opsbox-docker /package /package/docker
