@@ -1,8 +1,9 @@
 FROM docker:20.10-dind
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories && \
-    apk update && \
-    apk add curl bash vim 
+RUN apk update && \
+    apk add curl bash vim
+
+COPY --from=seanly/vimrc /package/vim/init.vim /root/.vimrc
 
 RUN adduser -D opsbox && \
     mkdir -p /var/lib/opsbox && \

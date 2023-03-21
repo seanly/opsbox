@@ -104,3 +104,10 @@ COPY --from=mikefarah/yq /usr/bin/yq /usr/bin/yq
 COPY --from=restic/restic /usr/bin/restic /usr/bin/restic
 COPY --from=minio/mc /usr/bin/mc /usr/bin/mc
 COPY --from=seanly/opsbox-docker /package /package/docker
+
+# vimrc
+COPY --from=seanly/vimrc /package/vim/init.vim /root/.vimrc
+RUN mkdir -p /root/.config/nvim; ln -s /root/.vimrc /root/.config/nvim/init.vim && \
+    echo "alias vim=nvim" >> /root/.bashrc && \
+    echo "alias k=kubectl" >> /root/.bashrc && \
+    echo "alias vi=nvim" >> /root/.bashrc 
