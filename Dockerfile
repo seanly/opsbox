@@ -3,7 +3,7 @@ FROM openjdk:17-alpine3.14
 RUN apk update && \
     apk add --update --no-cache python3 py3-pip curl wget jq bash neovim \ 
         ctags openssh-server openssh-client ansible fzf git rsync openssl openssl-dev \
-        certbot && \
+        certbot ncurses && \
     pip install jinja2-cli[yaml] && \
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
