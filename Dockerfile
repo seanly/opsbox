@@ -1,4 +1,4 @@
-FROM openjdk:17-alpine3.14
+FROM alpine:3.17.2
 
 RUN apk update && \
     apk add --update --no-cache python3 py3-pip curl wget jq bash neovim \ 
@@ -105,7 +105,7 @@ RUN wget https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 && \
 COPY --from=mikefarah/yq /usr/bin/yq /usr/bin/yq
 COPY --from=restic/restic /usr/bin/restic /usr/bin/restic
 COPY --from=minio/mc /usr/bin/mc /usr/bin/mc
-COPY --from=seanly/opsbox-docker /package /package/docker
+COPY --from=seanly/opsbox-docker /package/docker.tar.gz /package/docker.tar.gz
 
 # vimrc
 COPY --from=seanly/vimrc /package/vim/init.vim /root/.vimrc
