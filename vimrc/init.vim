@@ -122,3 +122,20 @@ nnoremap <leader>ev :vsp $MYVIMRC<CR>
 nnoremap <leader>ez :vsp ~/.zshrc <CR>
 
 nnoremap <leader>s :mksession<CR>
+
+" 递归查找子文件
+set path+=**
+" 展示match的文件列表
+set wildmenu
+
+let g:netrw_banner=0 " 禁用没用的横幅
+let g:netrw_winsize=25 " 初始窗口大小为25%
+let g:netrw_liststyle=3 " 使用树状模式
+let g:netrw_altv=1 " 分割窗口时默认在右边
+let g:netrw_browse_split=4 " enter时在上一个窗口打开
+" Usage:
+" 1. `:vexplore` 打开文件树，`enter` 以覆盖上一窗口打开，v以分割窗口打开
+" 2. D删除文件，R重命名文件，其他操作可参考 `:help netrw`
+
+
+" https://mp.weixin.qq.com/s/XFLwtYpSzkrfKTC50Al4-A
