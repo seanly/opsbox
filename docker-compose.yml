@@ -5,16 +5,6 @@ services:
       context: ./vimrc
     image: seanly/vimrc
 
-  opsbox-k3s:
-    build:
-      context: ./k3s
-    image: seanly/k3s-dind
-    volumes:
-      - ./:/ws
-    restart: always
-    privileged: true
-    network_mode: host
-
   opsbox-tool:
     build:
       context: ./

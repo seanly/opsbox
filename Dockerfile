@@ -50,15 +50,15 @@ ARG ARCH=amd64
 
 ENV HELM_VERSION v3.9.0
 ENV KUSTOMIZE_VERSION v4.5.5
-ENV ETCD_VERSION v3.5.1
 ENV RKE_VERSION v1.3.8
 ENV VELERO_VERSION v1.10.2
+ENV OSSUTIL_VERSION 1.7.15
 
 ENV HELM_URL_V3=https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz \
-    ETCD_URL=https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-${ARCH}.tar.gz \
     KUSTOMIZE_URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_${ARCH}.tar.gz \
     RKE_URL=https://github.com/rancher/rke/releases/download/${RKE_VERSION}/rke_linux-${ARCH} \
-    VELERO_URL=https://github.com/vmware-tanzu/velero/releases/download/${VELERO_VERSION}/velero-${VELERO_VERSION}-linux-${ARCH}.tar.gz
+    VELERO_URL=https://github.com/vmware-tanzu/velero/releases/download/${VELERO_VERSION}/velero-${VELERO_VERSION}-linux-${ARCH}.tar.gz \
+    OSSUTIL_URL=https://gosspublic.alicdn.com/ossutil/${OSSUTIL_VERSION}/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}.zip  
 
 # set up helm 3 and kustomize
 RUN curl ${HELM_URL_V3} | tar xvzf - --strip-components=1 -C /usr/bin && \
@@ -67,14 +67,10 @@ RUN curl ${HELM_URL_V3} | tar xvzf - --strip-components=1 -C /usr/bin && \
     wget -O /usr/bin/rke ${RKE_URL} && \
     chmod +x /usr/bin/rke && \
     curl -sLf ${VELERO_URL} | tar xvzf - --strip-components=1 -C /usr/bin && \
-    mkdir -p /var/lib/rancher/k3s/agent/images/ && \
-    curl -sfL ${ETCD_URL} | tar xvzf - --strip-components=1 -C /usr/bin/ etcd-${ETCD_VERSION}-linux-${ARCH}/etcdctl
-
-ENV ETCDCTL_API=3
-ENV SSL_CERT_DIR /etc/rancher/ssl
-ENV PATH="$PATH:/bin/aux"
-
-ENV CRI_CONFIG_FILE="/var/lib/rancher/k3s/agent/etc/crictl.yaml"
+    wget ${OSSUTIL_URL} && \
+    unzip -d /tmp/ ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}.zip && \
+    chmod 750 /tmp/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}/* && \
+    cp -r /tmp/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}/* /usr/bin/
 
 RUN \
     ( \
@@ -87,15 +83,11 @@ RUN \
     ./"${KREW}" install krew \
     )
 
-ENV PATH=${PATH}:/root/.krew/bin
+ENV PATH="${PATH}:/root/.krew/bin"
 
 RUN kubectl krew install ns && \
     kubectl krew install ctx && \
     kubectl krew install neat 
-
-RUN wget https://gosspublic.alicdn.com/ossutil/1.7.14/ossutil64 && \
-    mv ./ossutil64 /usr/bin/ossutil64 && \
-    chmod 750 /usr/bin/ossutil64
     
 COPY --from=mikefarah/yq /usr/bin/yq /usr/bin/yq
 COPY --from=restic/restic /usr/bin/restic /usr/bin/restic
@@ -112,6 +104,5 @@ RUN curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim
     echo "alias vim=nvim" >> /root/.bashrc && \
     echo "alias k=kubectl" >> /root/.bashrc && \
     echo "alias vi=nvim" >> /root/.bashrc 
-
 
 WORKDIR /ws
