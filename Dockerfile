@@ -3,7 +3,7 @@ FROM alpine:3.17.2
 RUN apk update && \
     apk add --update --no-cache python3 py3-pip curl wget jq bash neovim \ 
         ctags openssh-server openssh-client ansible fzf git rsync openssl openssl-dev \
-        certbot ncurses sshpass busybox-extras && \
+        certbot ncurses sshpass busybox-extras bzip2 && \
     pip install jinja2-cli[yaml] && \
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
@@ -46,37 +46,39 @@ RUN ln -s /usr/bin/cni /usr/bin/bridge && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/ip6tables-save && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/ip6tables-restore && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/ip6tables-translate
-ARG ARCH=amd64
 
 ENV HELM_VERSION v3.9.0
 ENV KUSTOMIZE_VERSION v4.5.5
 ENV RKE_VERSION v1.3.8
 ENV VELERO_VERSION v1.10.2
 ENV OSSUTIL_VERSION 1.7.15
-
-ENV HELM_URL_V3=https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz \
-    KUSTOMIZE_URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_${ARCH}.tar.gz \
-    RKE_URL=https://github.com/rancher/rke/releases/download/${RKE_VERSION}/rke_linux-${ARCH} \
-    VELERO_URL=https://github.com/vmware-tanzu/velero/releases/download/${VELERO_VERSION}/velero-${VELERO_VERSION}-linux-${ARCH}.tar.gz \
-    OSSUTIL_URL=https://gosspublic.alicdn.com/ossutil/${OSSUTIL_VERSION}/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}.zip  
-
-# set up helm 3 and kustomize
-RUN curl ${HELM_URL_V3} | tar xvzf - --strip-components=1 -C /usr/bin && \
-    curl -sLf ${KUSTOMIZE_URL} | tar -xzf - -C /usr/bin && \
-    chmod +x /usr/bin/kustomize && \
-    wget -O /usr/bin/rke ${RKE_URL} && \
-    chmod +x /usr/bin/rke && \
-    curl -sLf ${VELERO_URL} | tar xvzf - --strip-components=1 -C /usr/bin && \
-    wget ${OSSUTIL_URL} && \
-    unzip -d /tmp/ ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}.zip && \
-    chmod 750 /tmp/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}/* && \
-    cp -r /tmp/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}/* /usr/bin/
+ENV RESTIC_VERSION 0.15.1
 
 RUN \
     ( \
     set -x; cd "$(mktemp -d)" && \
     OS="$(uname | tr '[:upper:]' '[:lower:]')" && \
     ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" && \
+    HELM_URL_V3=https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz && \
+    curl ${HELM_URL_V3} | tar xvzf - --strip-components=1 -C /usr/bin && \
+    KUSTOMIZE_URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_${ARCH}.tar.gz && \
+    curl -sLf ${KUSTOMIZE_URL} | tar -xzf - -C /usr/bin && \
+    chmod +x /usr/bin/kustomize && \
+    RKE_URL=https://github.com/rancher/rke/releases/download/${RKE_VERSION}/rke_linux-${ARCH} && \
+    wget -O /usr/bin/rke ${RKE_URL} && \
+    chmod +x /usr/bin/rke && \
+    VELERO_URL=https://github.com/vmware-tanzu/velero/releases/download/${VELERO_VERSION}/velero-${VELERO_VERSION}-linux-${ARCH}.tar.gz && \
+    curl -sLf ${VELERO_URL} | tar xvzf - --strip-components=1 -C /usr/bin && \
+    OSSUTIL_URL=https://gosspublic.alicdn.com/ossutil/${OSSUTIL_VERSION}/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}.zip  && \
+    wget ${OSSUTIL_URL} && \
+    unzip -d /tmp/ ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}.zip && \
+    chmod 750 /tmp/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}/* && \
+    cp -r /tmp/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}/* /usr/bin/ && \
+    RESTIC_URL=https://github.com/restic/restic/releases/download/v${RESTIC_VERSION}/restic_${RESTIC_VERSION}_linux_${ARCH}.bz2 && \
+    curl -fsSLO ${RESTIC_URL} && \
+    bzip2 -d restic_${RESTIC_VERSION}_linux_${ARCH}.bz2 && \
+    mv restic_${RESTIC_VERSION}_linux_${ARCH} /usr/bin/restic && \
+    chmod 750 /usr/bin/restic )&& \
     KREW="krew-${OS}_${ARCH}" && \
     curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
     tar zxvf "${KREW}.tar.gz" && \
