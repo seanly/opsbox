@@ -36,3 +36,7 @@ services:
     build: 
       context: ./krew
     image: seanly/toolset:krew
+  nerdctl:
+    build: 
+      context: ./nerdctl
+    image: seanly/toolset:nerdctl

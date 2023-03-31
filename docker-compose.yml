@@ -4,8 +4,8 @@ services:
     build:
       context: ./
     image: seanly/opsbox:toolset
-    command: bash
     tty: true
     volumes:
-      - ./:/data
+      - ./:/ws
+    privileged: true
     restart: always

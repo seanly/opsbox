@@ -1,10 +1,11 @@
 FROM alpine:3.17.2
 
 RUN apk update && \
-    apk add --update --no-cache python3 py3-pip curl wget jq bash neovim \ 
+    apk add --update --no-cache python3 py3-pip curl wget jq bash bash-completion neovim \ 
         ctags openssh-server openssh-client ansible fzf git rsync openssl openssl-dev \
-        certbot ncurses sshpass busybox-extras bzip2 && \
+        certbot ncurses sshpass busybox-extras bzip2 tmux && \
     pip install jinja2-cli[yaml] && \
+    sed -i 's/ash/bash/g' /etc/passwd && \
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)"
 
 # Set up K3s: copy the necessary binaries from the K3s image.
@@ -62,11 +63,22 @@ COPY --from=seanly/vimrc /package/vim/init.vim /root/.vimrc
 RUN curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
     mkdir -p /root/.config/nvim; ln -s /root/.vimrc /root/.config/nvim/init.vim && \
-    echo "alias vim=nvim" >> /root/.bashrc && \
-    echo "alias k=kubectl" >> /root/.bashrc && \
-    echo "alias vi=nvim" >> /root/.bashrc 
+    echo "alias vim=nvim" >> ~/.bashrc && \
+    echo "alias k=kubectl" >> ~/.bashrc && \
+    echo "alias vi=nvim" >> ~/.bashrc && \
+    echo 'OSH_THEME="powerline"' >> ~/.bashrc && \
+    echo 'plugins=(git bashmarks progress ansible kubectl)' >> ~/.bashrc && \
+    git clone --depth 1 https://github.com/jonmosco/kube-ps1.git ~/.plugins/kube-ps1 && \
+    echo "source ~/.plugins/kube-ps1/kube-ps1.sh" >> ~/.bashrc && \
+    echo "export PS1='[\u@\h \W \$(kube_ps1)]\$ '">> ~/.bashrc && \
+    echo "source /etc/profile.d/bash_completion.sh" >> ~/.bashrc && \
+    source ~/.bashrc 
 
 COPY --from=seanly/toolset:krew /root/.krew /root/.krew
 ENV PATH="${PATH}:/root/.krew/bin"
 
-WORKDIR /ws
+COPY --from=seanly/toolset:nerdctl /opt/nerdctl /opt/nerdctl
+
+WORKDIR /root
+
+CMD ["/bin/bash"]

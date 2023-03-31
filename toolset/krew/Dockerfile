@@ -18,4 +18,4 @@ ENV PATH="${PATH}:/root/.krew/bin"
 
 RUN kubectl-krew install ns && \
     kubectl-krew install ctx && \
-    kubectl-krew install neat 
+    kubectl-krew install neat
