@@ -1,14 +1,5 @@
 version: "3"
 services:
-  vimrc:
-    build: 
-      context: ./toolset/vimrc
-    image: seanly/toolset:vimrc
-
-  docker:
-    build: 
-      context: ./toolset/docker
-    image: seanly/toolset:docker
   toolset:
     build:
       context: ./

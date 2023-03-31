@@ -1,0 +1,38 @@
+version: "3"
+services:
+  docker:
+    build: 
+      context: ./docker
+    image: seanly/toolset:docker
+  vimrc:
+    build: 
+      context: ./vimrc
+    image: seanly/toolset:vimrc
+  helm:
+    build: 
+      context: ./helm
+    image: seanly/toolset:helm
+  kustomize:
+    build: 
+      context: ./kustomize
+    image: seanly/toolset:kustomize
+  restic:
+    build: 
+      context: ./restic
+    image: seanly/toolset:restic
+  rke:
+    build: 
+      context: ./rke
+    image: seanly/toolset:rke
+  velero:
+    build: 
+      context: ./velero
+    image: seanly/toolset:velero
+  ossutil:
+    build: 
+      context: ./ossutil
+    image: seanly/toolset:ossutil
+  krew:
+    build: 
+      context: ./krew
+    image: seanly/toolset:krew

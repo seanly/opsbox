@@ -46,55 +46,15 @@ RUN ln -s /usr/bin/cni /usr/bin/bridge && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/ip6tables-save && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/ip6tables-restore && \
     ln -s /usr/bin/xtables-legacy-multi /usr/bin/ip6tables-translate
-
-ENV HELM_VERSION v3.9.0
-ENV KUSTOMIZE_VERSION v4.5.5
-ENV RKE_VERSION v1.3.8
-ENV VELERO_VERSION v1.10.2
-ENV OSSUTIL_VERSION 1.7.15
-ENV RESTIC_VERSION 0.15.1
-
-RUN \
-    ( \
-    set -x; cd "$(mktemp -d)" && \
-    OS="$(uname | tr '[:upper:]' '[:lower:]')" && \
-    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" && \
-    HELM_URL_V3=https://get.helm.sh/helm-${HELM_VERSION}-linux-${ARCH}.tar.gz && \
-    curl ${HELM_URL_V3} | tar xvzf - --strip-components=1 -C /usr/bin && \
-    KUSTOMIZE_URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_${ARCH}.tar.gz && \
-    curl -sLf ${KUSTOMIZE_URL} | tar -xzf - -C /usr/bin && \
-    chmod +x /usr/bin/kustomize && \
-    RKE_URL=https://github.com/rancher/rke/releases/download/${RKE_VERSION}/rke_linux-${ARCH} && \
-    wget -O /usr/bin/rke ${RKE_URL} && \
-    chmod +x /usr/bin/rke && \
-    VELERO_URL=https://github.com/vmware-tanzu/velero/releases/download/${VELERO_VERSION}/velero-${VELERO_VERSION}-linux-${ARCH}.tar.gz && \
-    curl -sLf ${VELERO_URL} | tar xvzf - --strip-components=1 -C /usr/bin && \
-    OSSUTIL_URL=https://gosspublic.alicdn.com/ossutil/${OSSUTIL_VERSION}/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}.zip  && \
-    wget ${OSSUTIL_URL} && \
-    unzip -d /tmp/ ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}.zip && \
-    chmod 750 /tmp/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}/* && \
-    cp -r /tmp/ossutil-v${OSSUTIL_VERSION}-linux-${ARCH}/* /usr/bin/ && \
-    RESTIC_URL=https://github.com/restic/restic/releases/download/v${RESTIC_VERSION}/restic_${RESTIC_VERSION}_linux_${ARCH}.bz2 && \
-    curl -fsSLO ${RESTIC_URL} && \
-    bzip2 -d restic_${RESTIC_VERSION}_linux_${ARCH}.bz2 && \
-    mv restic_${RESTIC_VERSION}_linux_${ARCH} /usr/bin/restic && \
-    chmod 750 /usr/bin/restic && \
-    KREW="krew-${OS}_${ARCH}" && \
-    curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
-    tar zxvf "${KREW}.tar.gz" && \
-    ./"${KREW}" install krew \
-    )
-
-ENV PATH="${PATH}:/root/.krew/bin"
-
-RUN kubectl krew install ns && \
-    kubectl krew install ctx && \
-    kubectl krew install neat 
     
 COPY --from=mikefarah/yq /usr/bin/yq /usr/bin/yq
 COPY --from=minio/mc /usr/bin/mc /usr/bin/mc
-
-# docker
+COPY --from=seanly/toolset:restic /usr/bin/restic /usr/bin/restic
+COPY --from=seanly/toolset:ossutil /usr/bin/ossutil* /usr/bin/ossutil
+COPY --from=seanly/toolset:rke /usr/bin/rke /usr/bin/rke
+COPY --from=seanly/toolset:helm /usr/bin/helm /usr/bin/helm
+COPY --from=seanly/toolset:kustomize /usr/bin/kustomize /usr/bin/kustomize
+COPY --from=seanly/toolset:velero /usr/bin/velero /usr/bin/velero
 COPY --from=seanly/toolset:docker /package/docker.tar.gz /package/docker.tar.gz
 
 # vimrc
@@ -105,5 +65,8 @@ RUN curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim
     echo "alias vim=nvim" >> /root/.bashrc && \
     echo "alias k=kubectl" >> /root/.bashrc && \
     echo "alias vi=nvim" >> /root/.bashrc 
+
+COPY --from=seanly/toolset:krew /root/.krew /root/.krew
+ENV PATH="${PATH}:/root/.krew/bin"
 
 WORKDIR /ws
