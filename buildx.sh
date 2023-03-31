@@ -2,6 +2,14 @@
 
 set -ex
 
+BUILDER_NAME=opsbox-builder
+if ! $(docker buildx ls |grep -q ${BUILDER_NAME}); then
+  docker buildx create --name ${BUILDER_NAME}
+fi
+
+docker buildx use ${BUILDER_NAME}
+docker buildx inspect --bootstrap
+
 if [ $# -eq 1 ]; then
   _svc_name=$1
 fi
