@@ -1,0 +1,16 @@
+version: '3'
+services:
+  portainer:
+    container_name: portainer
+    image: registry.cn-hangzhou.aliyuncs.com/k8ops/portainer-ce:2.15.1-alpine
+    restart: unless-stopped
+    ports: 
+      - 9000:9000
+    volumes:
+      - ./data:/data
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+networks:
+  default:
+    name: jtit-network

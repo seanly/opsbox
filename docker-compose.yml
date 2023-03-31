@@ -2,15 +2,19 @@ version: "3"
 services:
   vimrc:
     build: 
-      context: ./vimrc
-    image: seanly/vimrc
+      context: ./toolset/vimrc
+    image: seanly/toolset:vimrc
 
-  opsbox-tool:
+  docker:
+    build: 
+      context: ./toolset/docker
+    image: seanly/toolset:docker
+  toolset:
     build:
       context: ./
-    image: seanly/opsbox-tool
+    image: seanly/opsbox:toolset
     command: bash
     tty: true
     volumes:
-      - ./:/ws
+      - ./:/data
     restart: always

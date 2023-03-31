@@ -1,0 +1,14 @@
+{
+  "max-concurrent-downloads": 3,
+  "max-concurrent-uploads": 3,
+  "log-driver": "json-file",
+  "log-opts": {
+    "labels": "dev.opsbox.project.name,log_ignore",
+    "max-size": "1g",
+    "max-file": "3"
+  },
+  "storage-driver": "overlay",
+  "bip": "192.168.10.1/24",
+  "data-root": "/data/var/lib/docker",
+  "hosts": ["unix:///var/run/docker.sock"]
+}

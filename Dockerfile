@@ -78,7 +78,7 @@ RUN \
     curl -fsSLO ${RESTIC_URL} && \
     bzip2 -d restic_${RESTIC_VERSION}_linux_${ARCH}.bz2 && \
     mv restic_${RESTIC_VERSION}_linux_${ARCH} /usr/bin/restic && \
-    chmod 750 /usr/bin/restic )&& \
+    chmod 750 /usr/bin/restic && \
     KREW="krew-${OS}_${ARCH}" && \
     curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" && \
     tar zxvf "${KREW}.tar.gz" && \
@@ -92,11 +92,10 @@ RUN kubectl krew install ns && \
     kubectl krew install neat 
     
 COPY --from=mikefarah/yq /usr/bin/yq /usr/bin/yq
-COPY --from=restic/restic /usr/bin/restic /usr/bin/restic
 COPY --from=minio/mc /usr/bin/mc /usr/bin/mc
 
 # docker
-COPY --from=seanly/opsbox-docker /package/docker.tar.gz /package/docker.tar.gz
+COPY --from=seanly/toolset:docker /package/docker.tar.gz /package/docker.tar.gz
 
 # vimrc
 COPY --from=seanly/vimrc /package/vim/init.vim /root/.vimrc
