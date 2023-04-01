@@ -18,7 +18,7 @@ function docker_buildx_svc() {
   _svc=$1
   _image=$(docker-compose config |yq ".services|to_entries|.[]| select(.key==\"${_svc}\")|.value.image")
   _context=$(docker-compose config |yq ".services|to_entries|.[]| select(.key==\"${_svc}\")|.value.build.context")
-  docker buildx build --platform linux/amd64,linux/arm64 -t ${_image} ${_context} --push
+  docker buildx build --platform linux/amd64,linux/arm64 -t ${_image} ${_context} --push --pull --progress=plain
 }
 
 if [ -n "$_svc_name" ]; then

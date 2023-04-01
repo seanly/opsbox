@@ -56,7 +56,7 @@ COPY --from=seanly/toolset:rke /usr/bin/rke /usr/bin/rke
 COPY --from=seanly/toolset:helm /usr/bin/helm /usr/bin/helm
 COPY --from=seanly/toolset:kustomize /usr/bin/kustomize /usr/bin/kustomize
 COPY --from=seanly/toolset:velero /usr/bin/velero /usr/bin/velero
-COPY --from=seanly/toolset:docker /package/docker.tar.gz /package/docker.tar.gz
+COPY --from=seanly/toolset:docker /install/docker/usr/bin/* /usr/bin/
 
 # vimrc
 COPY --from=seanly/vimrc /package/vim/init.vim /root/.vimrc
@@ -76,8 +76,6 @@ RUN curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim
 
 COPY --from=seanly/toolset:krew /root/.krew /root/.krew
 ENV PATH="${PATH}:/root/.krew/bin"
-
-COPY --from=seanly/toolset:nerdctl /opt/nerdctl /opt/nerdctl
 
 WORKDIR /root
 

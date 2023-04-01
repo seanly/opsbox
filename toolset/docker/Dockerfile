@@ -6,6 +6,7 @@ RUN apk update && apk add --update --no-cache curl
 COPY ./rootfs /
 
 ARG DOCKER_VERSION=20.10.9
+ARG COMPOSE_VERSION=v2.17.2
 
 RUN \
     ( \
@@ -13,6 +14,9 @@ RUN \
     DOCKER_URL=https://download.docker.com/linux/static/stable/${ARCH}/docker-${DOCKER_VERSION}.tgz && \
     mkdir -p /install/docker/usr/bin && \
     curl -sLf ${DOCKER_URL} | tar -xvzf - --strip-components=1 -C /install/docker/usr/bin/ && \
+    COMPOSE_URL=https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${ARCH} && \
+    curl -sSLf -o /install/docker/usr/bin/docker-compose ${COMPOSE_URL} && \
+    chmod +x /install/docker/usr/bin/docker-compose && \
     mkdir -p /package && \
     tar -zcvf /package/docker.tar.gz -C/install/ . \
     )
