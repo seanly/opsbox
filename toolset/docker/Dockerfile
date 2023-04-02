@@ -14,9 +14,11 @@ RUN \
     DOCKER_URL=https://download.docker.com/linux/static/stable/${ARCH}/docker-${DOCKER_VERSION}.tgz && \
     mkdir -p /install/docker/usr/bin && \
     curl -sLf ${DOCKER_URL} | tar -xvzf - --strip-components=1 -C /install/docker/usr/bin/ && \
-    COMPOSE_URL=https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-linux-${ARCH} && \
-    curl -sSLf -o /install/docker/usr/bin/docker-compose ${COMPOSE_URL} && \
-    chmod +x /install/docker/usr/bin/docker-compose && \
     mkdir -p /package && \
     tar -zcvf /package/docker.tar.gz -C/install/ . \
     )
+
+
+# docker plugin /root/.docker/cli-plugins/docker-[buildx|compose] 
+COPY --from=docker/compose-bin:2.17.2 /usr/bin/docker-compose /install/docker/usr/bin/docker-compose
+COPY --from=docker/buildx-bin:0.10.4 /usr/bin/docker-buildx /install/docker/usr/bin/docker-buildx
