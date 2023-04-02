@@ -18,7 +18,5 @@ RUN \
     tar -zcvf /package/docker.tar.gz -C/install/ . \
     )
 
-
-# docker plugin /root/.docker/cli-plugins/docker-[buildx|compose] 
-COPY --from=docker/compose-bin:2.17.2 /usr/bin/docker-compose /install/docker/usr/bin/docker-compose
-COPY --from=docker/buildx-bin:0.10.4 /usr/bin/docker-buildx /install/docker/usr/bin/docker-buildx
+COPY --from=docker/compose-bin:v2.17.2 /docker-compose /install/docker/usr/bin/docker-compose
+COPY --from=docker/buildx-bin:0.10.4 /buildx /root/.docker/cli-plugins/docker-buildx

@@ -30,7 +30,7 @@ ENV PATH="${PATH}:/root/.krew/bin"
 COPY --from=seanly/toolset:docker /install/docker/usr/bin/* /usr/bin/
 
 # vimrc
-COPY --from=seanly/vimrc /package/vim/init.vim /root/.vimrc
+COPY --from=seanly/toolset:vimrc /package/vim/init.vim /root/.vimrc
 RUN curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
     mkdir -p /root/.config/nvim; ln -s /root/.vimrc /root/.config/nvim/init.vim && \
