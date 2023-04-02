@@ -28,6 +28,10 @@ services:
     build: 
       context: ./rke
     image: seanly/toolset:rke
+  dapper:
+    build: 
+      context: ./dapper
+    image: seanly/toolset:dapper
   velero:
     build: 
       context: ./velero
