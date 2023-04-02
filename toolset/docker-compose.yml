@@ -4,6 +4,10 @@ services:
     build: 
       context: ./docker
     image: seanly/toolset:docker
+  docker-buildx:
+    build: 
+      context: ./docker-buildx
+    image: seanly/toolset:docker-buildx
   vimrc:
     build: 
       context: ./vimrc
