@@ -1,0 +1,9 @@
+version: "3"
+services:
+  toolset:
+    build:
+      context: ./
+    image: seanly/appset:chatgpt
+    restart: always
+    ports:
+      - 3000:3000
