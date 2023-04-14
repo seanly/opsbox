@@ -1,9 +1,16 @@
 version: "3"
 services:
-  toolset:
+  chatgpt:
     build:
       context: ./
     image: seanly/appset:chatgpt
     restart: always
     ports:
       - 3000:3000
+  yakgpt:
+    build:
+      context: ./
+    image: yakgpt/yakgpt:latest
+    restart: always
+    ports:
+      - 3001:3000
