@@ -8,8 +8,6 @@ services:
     ports:
       - 3000:3000
   yakgpt:
-    build:
-      context: ./
     image: yakgpt/yakgpt:latest
     restart: always
     ports:
