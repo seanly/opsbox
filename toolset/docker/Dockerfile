@@ -5,7 +5,7 @@ RUN apk update && apk add --update --no-cache curl
 
 COPY ./rootfs /
 
-ARG DOCKER_VERSION=20.10.9
+ARG DOCKER_VERSION=20.10.24
 ARG COMPOSE_VERSION=v2.17.2
 
 RUN \
