@@ -6,7 +6,9 @@ RUN apk update && apk add --update --no-cache curl
 COPY ./rootfs /
 
 ARG DOCKER_VERSION=20.10.24
-ARG COMPOSE_VERSION=v2.17.2
+
+COPY --from=docker/compose-bin:v2.17.2 /docker-compose /install/docker/usr/bin/docker-compose
+COPY --from=docker/buildx-bin:0.10.4 /buildx /root/.docker/cli-plugins/docker-buildx
 
 RUN \
     ( \
@@ -17,6 +19,3 @@ RUN \
     mkdir -p /package && \
     tar -zcvf /package/docker.tar.gz -C/install/ . \
     )
-
-COPY --from=docker/compose-bin:v2.17.2 /docker-compose /install/docker/usr/bin/docker-compose
-COPY --from=docker/buildx-bin:0.10.4 /buildx /root/.docker/cli-plugins/docker-buildx
