@@ -1,5 +1,9 @@
 version: "3"
 services:
+  java8:
+    build: 
+      context: ./java8
+    image: seanly/toolset:java8
   docker:
     build: 
       context: ./docker
