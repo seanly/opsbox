@@ -1,2 +1,6 @@
 image:
   file: .gitpod.Dockerfile
+
+tasks:
+- name: docker create network
+  command: docker network create opsbox-network 

@@ -3,6 +3,7 @@ services:
   chatgpt:
     build:
       context: ./
+      dockerfile: ./Dockerfile.chatgpt-next-web
     image: seanly/appset:chatgpt
     restart: always
     ports:
@@ -12,3 +13,8 @@ services:
     restart: always
     ports:
       - 3001:3000
+
+networks:
+  default:
+    name: opsbox-network
+    external: true
