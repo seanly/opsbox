@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  traefik:
+    container_name: traefik
+    image: "traefik:v2.8.0"
+    command:
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.address=:80
+      - --providers.docker=true
+      - --api
+      - --log.level=DEBUG
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ".data/traefik/acme:/acme"
+    labels:
+      # Dashboard
+      - "traefik.http.routers.traefik.rule=Host(`traefik.opsbox.dev`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.middlewares=admin"
+      - "traefik.http.middlewares.admin.basicauth.users=admin:$$apr1$$J4wW1GaO$$aS0CiGib6UB7FKpvvcfpk0"
+
+networks:
+  default:
+    name: opsbox-network
+    external: true
