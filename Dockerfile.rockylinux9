@@ -58,7 +58,9 @@ RUN curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim
     ;echo 'plugins=+(zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting kube-aliases kube-ps1)' >> ~/.zshrc \
     ;echo "alias vim=nvim" >> ~/.zshrc \
     ;echo "alias k=kubectl" >> ~/.zshrc \
-    ;echo "alias vi=nvim" >> ~/.zshrc 
+    ;echo "alias vi=nvim" >> ~/.zshrc \
+    # fix kubectx error: /root/.krew/bin/kubectl-ctx: line 106: /root/.kube/kubectx: No such file or directory
+    ;mkdir -p /root/.kube 
 
 WORKDIR /root
 
