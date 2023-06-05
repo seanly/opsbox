@@ -29,4 +29,4 @@ bash scripts/install.sh
 ```
 3. run toolset
 
-Copy the `docker-compose.yml` from this repository to the environment, and start it with `docker-compose up -d`. Access the environment with `docker-compose exec toolset bash`.
+Copy the `docker-compose.yml` from this repository to the environment, and start it with `docker-compose up -d`. Access the environment with `docker-compose exec toolset zsh`.

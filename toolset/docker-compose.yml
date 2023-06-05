@@ -56,3 +56,7 @@ services:
     build: 
       context: ./nerdctl
     image: seanly/toolset:nerdctl
+  mkcert:
+    build: 
+      context: ./mkcert
+    image: seanly/toolset:mkcert
