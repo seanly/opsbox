@@ -60,3 +60,7 @@ services:
     build: 
       context: ./mkcert
     image: seanly/toolset:mkcert
+  jinja2-cli:
+    build: 
+      context: ./jinja2-cli
+    image: seanly/toolset:jinja2-cli
