@@ -68,3 +68,7 @@ services:
     build: 
       context: ./image-syncer
     image: seanly/toolset:image-syncer
+  confd:
+    build: 
+      context: ./confd
+    image: seanly/toolset:confd
