@@ -14,3 +14,5 @@ RUN \
     curl -sLf ${IMAGE_SYNCER_URL} -o /tmp/image-syncer.tar.gz && \
     tar -zxvf /tmp/image-syncer.tar.gz -C /usr/bin/ image-syncer \
     )
+
+WORKDIR /image-syncer

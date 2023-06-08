@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./job.yaml
+
+configMapGenerator:
+  - name: images-config
+    files:
+      - config/images.json
+
+secretGenerator:
+  - name: auth-config
+    files:
+      - config/auth.json
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+namePrefix: my-
+nameSuffix: -job

@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: image-syncer
+spec:
+  template:
+    spec:
+      containers:
+        - name: image-syncer
+          image: seanly/toolset:image-syncer
+          command: 
+            - image-syncer 
+            - --auth
+            - /image-syncer/etc/auth.json 
+            - --images 
+            - /image-syncer/etc/images.json
+            - -p 
+            - 20
+          volumeMounts:
+            - name: images-config
+              mountPath: /image-syncer/etc/auth.json
+              readOnly: true
+              subPath: auth.json
+            - name: auth-config
+              mountPath: /image-syncer/etc/images.json
+              readOnly: true
+              subPath: images.json
+      volumes:
+        - name: images-config
+          configMap:
+            name: images
+        - name: auth-config
+          secret:
+            secretName: auth
+      restartPolicy: Never
