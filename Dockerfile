@@ -22,6 +22,7 @@ COPY --from=seanly/toolset:helm /usr/bin/helm /usr/bin/helm
 COPY --from=seanly/toolset:kustomize /usr/bin/kustomize /usr/bin/kustomize
 COPY --from=seanly/toolset:kubectl /usr/bin/kubectl /usr/bin/kubectl
 COPY --from=seanly/toolset:velero /usr/bin/velero /usr/bin/velero
+COPY --from=seanly/toolset:helmfile /usr/bin/helmfile /usr/bin/helmfile
 
 # docker
 COPY --from=seanly/toolset:docker /install/docker/usr/bin/* /usr/bin/
