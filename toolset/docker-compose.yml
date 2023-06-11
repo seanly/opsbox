@@ -76,3 +76,7 @@ services:
     build: 
       context: ./helmfile
     image: seanly/toolset:helmfile
+  kubebuilder:
+    build: 
+      context: ./kubebuilder
+    image: seanly/toolset:kubebuilder
