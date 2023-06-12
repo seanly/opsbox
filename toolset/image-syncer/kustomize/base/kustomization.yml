@@ -15,6 +15,3 @@ secretGenerator:
 
 generatorOptions:
   disableNameSuffixHash: true
-
-namePrefix: my-
-nameSuffix: -job

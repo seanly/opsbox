@@ -3,33 +3,34 @@ kind: Job
 metadata:
   name: image-syncer
 spec:
+  ttlSecondsAfterFinished: 600
   template:
     spec:
       containers:
         - name: image-syncer
           image: seanly/toolset:image-syncer
-          command: 
-            - image-syncer 
+          command:
+            - image-syncer
             - --auth
-            - /image-syncer/etc/auth.json 
-            - --images 
-            - /image-syncer/etc/images.json
-            - -p 
-            - 20
+            - /config/auth.json
+            - --images
+            - /config/images.json
+            - -p
+            - "20"
           volumeMounts:
             - name: images-config
-              mountPath: /image-syncer/etc/auth.json
-              readOnly: true
-              subPath: auth.json
-            - name: auth-config
-              mountPath: /image-syncer/etc/images.json
+              mountPath: /config/images.json
               readOnly: true
               subPath: images.json
+            - name: auth-config
+              mountPath: /config/auth.json
+              readOnly: true
+              subPath: auth.json
       volumes:
         - name: images-config
           configMap:
-            name: images
+            name: images-config
         - name: auth-config
           secret:
-            secretName: auth
+            secretName: auth-config
       restartPolicy: Never
