@@ -80,3 +80,7 @@ services:
     build: 
       context: ./kubebuilder
     image: seanly/toolset:kubebuilder
+  oracle-jdk17:
+    build: 
+      context: ./oracle-jdk17
+    image: seanly/toolset:oracle-jdk17
