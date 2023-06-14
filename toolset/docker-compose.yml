@@ -84,3 +84,8 @@ services:
     build: 
       context: ./oracle-jdk17
     image: seanly/toolset:oracle-jdk17
+
+  oracle-jdk17-maven:
+    build: 
+      context: ./oracle-jdk17/maven
+    image: seanly/toolset:oracle-jdk17-maven
