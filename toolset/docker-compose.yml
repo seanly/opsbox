@@ -80,11 +80,14 @@ services:
     build: 
       context: ./kubebuilder
     image: seanly/toolset:kubebuilder
+  forego:
+    build: 
+      context: ./forego
+    image: seanly/toolset:forego
   oracle-jdk17:
     build: 
       context: ./oracle-jdk17
     image: seanly/toolset:oracle-jdk17
-
   oracle-jdk17-maven:
     build: 
       context: ./oracle-jdk17/maven
