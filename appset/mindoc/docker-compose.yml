@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  mindoc:
+    build: 
+      context: ./
+    image: seanly/appset:mindoc
+    container_name: mindoc
+    environment:
+      TZ: Asia/Shanghai
+      MINDOC_RUN_MODE: prod
+      MINDOC_DB_ADAPTER: sqlite3
+      MINDOC_DB_DATABASE: ./database/mindoc.db
+      MINDOC_ENABLE_EXPORT: false
+      MINDOC_CACHE: true
+      MINDOC_LDAP_ENABLE: false
+      MINDOC_LDAP_HOST: openldap
+      MINDOC_LDAP_PORT: 389
+      MINDOC_LDAP_ATTRIBUTE: uid
+      MINDOC_LDAP_BASE: dc=oes,dc=opsbox
+      MINDOC_LDAP_USER: uid=xxx,ou=users,dc=oes,dc=opsbox
+      MINDOC_LDAP_PASSWORD: xxx
+      MINDOC_LDAP_FILTER: objectClass=person
+    ports:
+      - "8181:8181"
+    volumes:
+      - mindoc-uploads:/mindoc/uploads
+      - mindoc-database:/mindoc/database
+    restart: always
+
+networks:
+  default:
+    name: opsbox-network
+    external: true
+volumes:
+    mindoc-database:
+    mindoc-uploads:
