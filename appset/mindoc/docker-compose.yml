@@ -4,7 +4,7 @@ services:
   mindoc:
     build: 
       context: ./
-    image: seanly/appset:mindoc
+    image: seanly/appset:mindoc-next
     container_name: mindoc
     environment:
       TZ: Asia/Shanghai
