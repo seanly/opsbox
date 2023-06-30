@@ -3,7 +3,7 @@ FROM golang:1.20.5-bullseye AS build
 ARG TAG=0.0.1
 
 ENV CGO_ENABLED=1
-RUN git clone -b feature/support-drawio https://github.com/seanly/mindoc /code
+RUN git clone -b next https://github.com/seanly/mindoc /code
 WORKDIR /code
 
 RUN go env && \
