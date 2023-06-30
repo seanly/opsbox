@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:11.6-alpine
+    environment:
+      - POSTGRES_USER=codimd
+      - POSTGRES_PASSWORD=codimd2022
+      - POSTGRES_DB=codimd
+    volumes:
+      - postgre-data:/var/lib/postgresql/data
+    restart: always
+  codimd:
+    build: 
+      context: ./
+    image: seanly/appset:codimd
+    container_name: codimd
+    environment:
+      - CMD_DB_URL=postgres://codimd:codimd2022@database/codimd
+      - CMD_USECDN=false
+      - CMD_ALLOW_GRAVATAR=false
+    depends_on:
+      - database
+    ports:
+      - "3000:3000"
+    volumes:
+      - codimd-data:/home/hackmd/app/public/uploads
+    restart: always
+    labels:
+      - "traefik.http.routers.codimd.rule=Host(`codimd.example.dev`)"
+      - "traefik.http.routers.codimd.tls=true"
+      - "traefik.http.routers.codimd.tls.certResolver=le"
+
+networks:
+  default:
+    name: opsbox-network
+    external: true
+volumes:
+    postgre-data:
+    codimd-data:
