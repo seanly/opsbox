@@ -1,7 +1,7 @@
 FROM gitpod/workspace-full
 # More information: https://www.gitpod.io/docs/config-docker/
 
-RUN brew install yq
+RUN brew install yq tig nvim
 
 ENV DOCKER_BUILDKIT=1
 
