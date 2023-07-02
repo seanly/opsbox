@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+  mysql:
+    image: seanly/mysql:5.7.35-extra
+    restart: unless-stopped
+    volumes:
+      - jms-mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: jms@root
+      MYSQL_DATABASE: jumpserver
+      MYSQL_USER: jumpserver_rw
+      MYSQL_PASSWORD: jumpserver_rw@root
+    healthcheck:
+      test: mysql --user=root --password=$$MYSQL_ROOT_PASSWORD -e "SHOW DATABASES;"
+      interval: 3s
+      timeout: 1s
+      retries: 5
+
+  redis:
+    image: redis:6
+    restart: unless-stopped
+    volumes:
+      - jms-redis:/data
+    environment:
+      - TZ=Asia/Shanghai
+    command: redis-server --requirepass redis@root
+
+  jumpserver:
+    container_name: jumpserver
+    image: jumpserver/jms_all:v2.13.0
+    restart: unless-stopped
+    privileged: true
+    volumes:
+    - jms-core:/opt/jumpserver/data 
+    - jms-koko:/opt/koko/data
+    - jms-lion:/opt/lion/data 
+    depends_on:
+      - mysql
+      - redis
+    links:
+      - mysql
+      - redis
+    ports:
+      - 2222:2222
+      - 8081:80
+    environment:
+      SECRET_KEY: kWQdmdCQKjaWnHctsHLlSPs8287o2kZlHYpPhkNQDkfaRulM6Y
+      BOOTSTRAP_TOKEN: eo25xyRtrasbTqrq
+      LOG_LEVEL: ERROR 
+      DB_HOST: mysql
+      DB_PORT: 3306 
+      DB_NAME: jumpserver 
+      DB_USER: jumpserver_rw
+      DB_PASSWORD: jumpserver_rw@root
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis@root
+
+networks:
+  default:
+    name: opsbox-network
+    external: true
+
+volumes:
+    jms-mysql:
+    jms-core:
+    jms-koko:
+    jms-lion:
+    jms-redis:
