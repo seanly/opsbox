@@ -25,3 +25,6 @@ networks:
 
 volumes:
     openldap-data:
+  
+# client:
+#   1. https://directory.apache.org/studio/

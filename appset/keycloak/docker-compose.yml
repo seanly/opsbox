@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   mysql:
     image: seanly/mysql:5.7.35-extra
@@ -49,3 +50,5 @@ networks:
 
 volumes:
     keycloak-mysql:
+
+# https://blog.please-open.it/ldap-keycloak/
