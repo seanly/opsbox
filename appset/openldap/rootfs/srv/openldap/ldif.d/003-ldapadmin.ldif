@@ -1,0 +1,13 @@
+dn: uid=ldapadmin,ou=users,dc=${OPENLDAP_DOMAIN},${OPENLDAP_SUFFIX}
+uid: ldapadmin
+description: OES Administrator
+givenName: ldapadmin
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+sn: ldapadmin
+cn: ldapadmin
+displayName: ldapadmin
+mail: ldapadmin@opsbox.dev
+userPassword: ${OPENLDAP_LDAPADMIN_PASSWORD}
