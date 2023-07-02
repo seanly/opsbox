@@ -92,3 +92,7 @@ services:
     build: 
       context: ./oracle-jdk17/maven
     image: seanly/toolset:oracle-jdk17-maven
+  envsubst:
+    build: 
+      context: ./envsubst
+    image: seanly/toolset:envsubst
