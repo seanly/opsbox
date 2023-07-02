@@ -9,9 +9,13 @@ services:
     environment:
       TZ: Asia/Shanghai
       MINDOC_RUN_MODE: prod
-      MINDOC_DB_ADAPTER: sqlite3
-      MINDOC_DB_DATABASE: ./database/mindoc.db
-      MINDOC_ENABLE_EXPORT: false
+      MINDOC_DB_ADAPTER: mysql
+      MINDOC_DB_HOST: mysql
+      MINDOC_DB_PORT: 3306
+      MINDOC_DB_DATABASE: mindoc_next
+      MINDOC_DB_USERNAME: mindoc_rw
+      MINDOC_DB_PASSWORD: "mindoc_rw@mindoc"
+      MINDOC_ENABLE_EXPORT: "false"
       MINDOC_CACHE: true
       MINDOC_LDAP_ENABLE: false
       MINDOC_LDAP_HOST: openldap
@@ -25,13 +29,25 @@ services:
       - "8181:8181"
     volumes:
       - mindoc-uploads:/mindoc/uploads
-      - mindoc-database:/mindoc/database
     restart: always
+
+  mysql:
+    image: seanly/mysql:5.7.35-extra
+    restart: always
+    volumes:
+      - mindoc-database:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: "mindoc_rw@root"
+      MYSQL_USER: 'mindoc_rw'
+      MYSQL_PASSWORD: 'mindoc_rw@mindoc'
+      MYSQL_DATABASE:  'mindoc_next'
 
 networks:
   default:
     name: opsbox-network
     external: true
+
 volumes:
     mindoc-database:
     mindoc-uploads:
