@@ -1,18 +1,25 @@
-FROM rockylinux:9-minimal
+# Build dapper
+FROM golang:1.20.5 as go-builder
+
+WORKDIR /build
+
+# Install the dependencies
+RUN git clone -b master https://github.com/seanly/image-syncer /build
+RUN go mod download
 
 RUN set -eux \
-  ; microdnf install -y curl tar gzip
-
-ARG IMAGE_SYNCER_VERSION=v1.3.1
-
-RUN \
-    ( \
-    set -x; cd "$(mktemp -d)" && \
-    OS="$(uname | tr '[:upper:]' '[:lower:]')" && \
-    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" && \
-    IMAGE_SYNCER_URL=https://github.com/AliyunContainerService/image-syncer/releases/download/${IMAGE_SYNCER_VERSION}/image-syncer-${IMAGE_SYNCER_VERSION}-${OS}-${ARCH}.tar.gz && \
-    curl -sLf ${IMAGE_SYNCER_URL} -o /tmp/image-syncer.tar.gz && \
-    tar -zxvf /tmp/image-syncer.tar.gz -C /usr/bin/ image-syncer \
-    )
-
-WORKDIR /image-syncer
+    ; VERSION=$(git rev-parse --short HEAD)\
+    ; OS="$(uname | tr '[:upper:]' '[:lower:]')" \
+    ; ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" \
+    ;case "$ARCH" in \
+		arm64) \
+            CGO_ENABLED=0 GOARCH=${ARCH} go build \
+                -a -tags netgo -installsuffix netgo \
+                -ldflags "-X main.VERSION=$VERSION" -o /usr/bin/image-syncer main.go;; \
+		amd64) \
+            CGO_ENABLED=0 GOARCH=${ARCH} go build \
+                -a -tags netgo -installsuffix netgo \
+                -ldflags "-X main.VERSION=$VERSION -extldflags '-static -s'" -o /usr/bin/image-syncer main.go ;;\
+		*) echo >&2 "error: unsupported architecture: '$arch'"; exit 1 ;; \
+	  esac; \
+    CGO_ENABLED=0 GOARCH=${ARCH} GOOS=darwin go build -ldflags "-X main.VERSION=$VERSION"  -o ./bin/image-syncer-Darwin-${ARCH} main.go
