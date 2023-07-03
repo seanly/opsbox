@@ -2,7 +2,7 @@ version: '3'
 
 services:
     yearning:
-        image: yeelabs/yearning:latest
+        image: yeelabs/yearning:v3.1.4
         environment:
            MYSQL_USER: yearning_rw
            MYSQL_PASSWORD: yearning_rw@root
