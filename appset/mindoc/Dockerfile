@@ -58,11 +58,11 @@ EXPOSE 8181/tcp
 
 WORKDIR /mindoc
 
-COPY --from=build /code/ /usr/share/fonts/win/
 COPY --from=build /code/dist/ /mindoc/
 
 ENV ZONEINFO=/mindoc/lib/time/zoneinfo.zip
 RUN chmod +x /mindoc/start.sh;\
+    mkdir -p /usr/share/fonts/win/; \
     cp -r simsun.ttc /usr/share/fonts/win/simsun.ttc; \
     chmod a+r /usr/share/fonts/win/simsun.ttc
 

@@ -36,12 +36,14 @@ services:
     restart: always
     volumes:
       - mindoc-database:/var/lib/mysql
-      - ./my.cnf:/etc/mysql/my.cnf
     environment:
       MYSQL_ROOT_PASSWORD: "mindoc_rw@root"
       MYSQL_USER: 'mindoc_rw'
       MYSQL_PASSWORD: 'mindoc_rw@mindoc'
       MYSQL_DATABASE:  'mindoc_next'
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
 
 networks:
   default:
