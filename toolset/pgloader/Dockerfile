@@ -42,7 +42,8 @@ RUN apt-get update \
         libzip-dev \
         make \
         sbcl \
-        unzip \
+        unzip iputils-ping telnet \
+        mycli mariadb-client \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/src/pgloader/build/bin/pgloader /usr/local/bin
