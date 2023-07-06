@@ -14,13 +14,16 @@ RUN apt-get update \
     make \
     openssl \
     patch \
-    sbcl \
     time \
     unzip \
     wget \
     cl-ironclad \
     cl-babel \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl -SL https://github.com/Clozure/ccl/releases/download/v1.12/ccl-1.12-linuxx86.tar.gz \
+    | tar xz -C /usr/local/src/ \
+    && mv /usr/local/src/ccl/scripts/ccl64 /usr/local/bin/ccl
 
 RUN mkdir -p /opt/src/; git clone -b master https://github.com/seanly/pgloader /opt/src/pgloader
 WORKDIR /opt/src/pgloader
@@ -29,7 +32,7 @@ ARG DYNSIZE=16384
 
 RUN mkdir -p /opt/src/pgloader/build/bin \
     && cd /opt/src/pgloader \
-    && make DYNSIZE=$DYNSIZE clones save
+    && make CL=ccl DYNSIZE=$DYNSIZE clones save
 
 FROM debian:bookworm-slim
 
@@ -47,4 +50,3 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /opt/src/pgloader/build/bin/pgloader /usr/local/bin
-COPY --from=builder /opt/src/pgloader/conf/freetds.conf /etc/freetds/freetds.conf
