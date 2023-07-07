@@ -2,7 +2,7 @@ version: '3'
 
 services:
   mysql:
-    image: seanly/mysql:5.7.35-extra
+    image: seanly/dbextra:mysql-5.7.35
     restart: unless-stopped
     volumes:
       - keycloak-mysql:/var/lib/mysql

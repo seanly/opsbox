@@ -8,7 +8,7 @@ services:
       - POSTGRES_PASSWORD=codimd2022
       - POSTGRES_DB=codimd
     volumes:
-      - postgre-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     restart: always
   codimd:
     build: 
@@ -36,5 +36,5 @@ networks:
     name: opsbox-network
     external: true
 volumes:
-    postgre-data:
+    postgres-data:
     codimd-data:
