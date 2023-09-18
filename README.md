@@ -23,7 +23,7 @@ mv install/docker/usr/bin/docker-compose /usr/bin/
 # install/docker & package/docker.tar.gz
 crane blob seanly/toolset:docker@sha256:2616ef4691baaa7c4f334153ca8439373d2b29d85d11e3b0a7f1f61d66b5c9c2 | tar -xz
 # 通过 package/docker.tar.gz
-cd install/package
+cd package
 tar -xzf docker.tar.gz
 bash scripts/install.sh
 ```
